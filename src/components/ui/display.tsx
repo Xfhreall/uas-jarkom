@@ -104,9 +104,12 @@ export default function ImageGallery() {
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen bg-gradient-to-b from-background to-muted">
-      <h1 className="text-4xl font-bold mb-8 text-center text-primary">
+      <h1 className="text-4xl font-bold text-center text-primary">
         Kuis UAS Jarkom
       </h1>
+      <p className="mt-8 text-center opacity-60">
+        Gunakan laptop untuk pengalaman terbaik
+      </p>
       <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
         <div className="flex space-x-2 w-full sm:w-auto">
           <Input
