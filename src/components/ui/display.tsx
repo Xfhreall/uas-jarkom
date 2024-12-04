@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Pagination,
@@ -17,7 +17,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { MoonIcon, SunIcon, ChevronLeft, ChevronRight } from "lucide-react";
-import { log } from "console";
 
 const IMAGES_PER_PAGE = 10;
 const TOTAL_IMAGES = 50;
@@ -27,6 +26,7 @@ export default function ImageGallery() {
   const [jumpToImage, setJumpToImage] = useState("");
   const [activeImage, setActiveImage] = useState<number | null>(null);
   const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
   const indexOfLastImage = currentPage * IMAGES_PER_PAGE;
@@ -62,25 +62,45 @@ export default function ImageGallery() {
     (_, i) => indexOfFirstImage + i + 1
   ).filter((num) => num <= TOTAL_IMAGES);
 
-  const handlePreviousImage = () => {
+  const handlePreviousImage = useCallback(() => {
     if (activeImage && activeImage > 1) {
       setActiveImage(activeImage - 1);
     } else {
       setActiveImage(TOTAL_IMAGES);
     }
-  };
+  }, [activeImage]);
 
-  const handleNextImage = () => {
+  const handleNextImage = useCallback(() => {
     if (activeImage && activeImage < TOTAL_IMAGES) {
       setActiveImage(activeImage + 1);
     } else {
       setActiveImage(1);
     }
-  };
+  }, [activeImage]);
 
   const handleImageLoad = (imageNumber: number) => {
     setLoadedImages((prev) => ({ ...prev, [imageNumber]: true }));
   };
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (isDialogOpen) {
+        if (event.key === "ArrowLeft") {
+          handlePreviousImage();
+        } else if (event.key === "ArrowRight") {
+          handleNextImage();
+        }
+      }
+    },
+    [isDialogOpen, handlePreviousImage, handleNextImage]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen bg-gradient-to-b from-background to-muted">
@@ -119,6 +139,7 @@ export default function ImageGallery() {
             <CardContent className="p-0">
               <Dialog
                 onOpenChange={(open) => {
+                  setIsDialogOpen(open);
                   if (open) setActiveImage(imageNumber);
                   else setActiveImage(null);
                 }}
