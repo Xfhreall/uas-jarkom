@@ -103,7 +103,7 @@ export default function ImageGallery() {
   }, [handleKeyDown]);
 
   return (
-    <div className="container mx-auto px-4 py-8 min-h-screen bg-gradient-to-b from-background to-muted">
+    <div className="container mx-auto px-4 py-8 min-h-screen">
       <h1 className="text-4xl font-bold text-center text-primary">
         Kuis UAS Jarkom
       </h1>
